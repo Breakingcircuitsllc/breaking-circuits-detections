@@ -14,6 +14,7 @@ the published indicators, and free to use.
 |---|---|---|
 | [UNC7017 / AOMEI](detections/unc7017-aomei.md) | Newly named actor (GTIG/Mandiant, Oct 2026). Ephemeral 5–10-minute tampering of AOMEI Backupper update servers, Apr–Jul 2026 — CROSSROAD downloader → SHINYROAD backdoor via signed-Radmin DLL sideloading. | Scheduled task `\RadminComponentRuntime`; `FamItrfc.exe --runtimechk` |
 | [GhostAction stage 2](detections/ghostaction-stage2.md) | Fake-font credential stealer planted in 94 GitHub repos (Oct 2026), launched by a VS Code `tasks.json` folderOpen task disguised as a font file. | Node.js executing a `.woff2` file — never legitimate |
+| [GhostAction phishing arm](detections/ghostaction-phishing-arm.md) | Access-refresh phishing via lookalike domain `my-github[.]com` (Oct 2026): fake GitHub security alert → reverse proxy harvesting password + 2FA → silent OAuth app authorization (`repo`, `workflow`, `read:org`). | OAuth client ID `Ov23ctrqCqZ79UaYKwyq`; the `my-github.com` domain |
 | [MALFEX `imgdecode`](detections/malfex-imgdecode.md) | npm package whose native DLL side-loads encrypted shellcode from a GitHub-hosted image; ends in the "movinlike" stealer+RAT. MALFEX active since Aug 2023. | `node.exe` spawning `dllhost.exe` with no `/Processid:` |
 | [Aoki infostealer](detections/aoki-infostealer.md) | Latest Aoki (Aokigahara) builds targeting AI developer credential stores — Claude, ChatGPT, Codex, Copilot, Cursor, Gemini, JetBrains AI, Kiro — plus AWS creds. | Access to `~/.claude.json`, Codex `config.toml`, AI-tool cookie stores |
 
