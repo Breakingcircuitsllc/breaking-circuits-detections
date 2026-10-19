@@ -19,7 +19,10 @@ follow-on research (Oct 17–18), the operation stopped shipping when npm
 acted (@apexacc/cli deprecated Oct 13, @apexacc/audit removed from the
 registry), but two predecessor packages were STILL INSTALLABLE with no
 deprecation notice as of Oct 18 morning: `@apexfdn/copilot-mcp` and
-`@apexscore/cli`. Deprecation does not stop installs — all 122 versions of
+`@apexscore/cli` — and both still resolve on the live registry as of
+Oct 19 ~13:42 EDT (copilot-mcp latest 0.11.6, @apexscore/cli latest 1.1.1),
+roughly 24 hours after dugganusa filed them with npm security and
+OpenSSF's malicious-packages database on Oct 18. Deprecation does not stop installs — all 122 versions of
 `@apexacc/cli` still resolve, so a pinned version or old lockfile keeps
 pulling it. Hunt value is historical-compromise and current exposure.
 
@@ -52,7 +55,10 @@ T1113 (Screen Capture), T1539 (Steal Web Session Cookie), T1041
 # npm packages — the four known names (dugganusa, Oct 17-18)
 # @apexacc/cli deprecated Oct 13 but ALL 122 versions still resolve
 # @apexacc/audit removed from registry
-# @apexfdn/copilot-mcp and @apexscore/cli STILL INSTALLABLE as of Oct 18 AM
+# @apexfdn/copilot-mcp and @apexscore/cli STILL LIVE as of Oct 19 ~13:42 EDT
+# (re-checked against the live registry: copilot-mcp latest 0.11.6,
+# @apexscore/cli latest 1.1.1 — both resolve, ~24h after dugganusa filed
+# with npm security and OpenSSF's malicious-packages database on Oct 18)
 @apexacc/cli
 @apexacc/audit
 @apexfdn/copilot-mcp
@@ -352,7 +358,9 @@ rule REF8801_ApexAccelerator_Triage {
    all four scoped packages. `@apexacc/cli`'s 122 versions still resolve
    despite deprecation — pinning or a stale lockfile re-pulls malware.
    `@apexfdn/copilot-mcp` and `@apexscore/cli` were still installable as
-   of Oct 18; check npm's current status before assuming removal.
+   of Oct 18 and STILL RESOLVE on the live registry as of Oct 19 ~13:42 EDT,
+   ~24h after dugganusa filed them with npm security — assume they are
+   installable until npm acts.
 3. **macOS:** the phished password is stored in
    `~/.config/cloudsync/data.json` — change it from a CLEAN device, then
    remove `~/.local/share/cloudsync/` and sweep for the `installer`
