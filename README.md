@@ -12,6 +12,7 @@ the published indicators, and free to use.
 
 | Pack | Campaign | Strongest hunt |
 |---|---|---|
+| [Apex Accelerator / REF8801](detections/apex-accelerator-ref8801.md) | Fake Web3 accelerator (Elastic, Oct 2026): malicious-from-publish npm packages drop cross-platform stealers and hijack the victim's AI coding agent — rerouted OpenRouter-labeled traffic + attacker-controlled MCP server. | `~/.apex/agent/mcp.json` pointing at `arena.apexaccs.org`; `vrf.apexaccs[.]org` verification C2 |
 | [UNC7017 / AOMEI](detections/unc7017-aomei.md) | Newly named actor (GTIG/Mandiant, Oct 2026). Ephemeral 5–10-minute tampering of AOMEI Backupper update servers, Apr–Jul 2026 — CROSSROAD downloader → SHINYROAD backdoor via signed-Radmin DLL sideloading. | Scheduled task `\RadminComponentRuntime`; `FamItrfc.exe --runtimechk` |
 | [GhostAction stage 2](detections/ghostaction-stage2.md) | Fake-font credential stealer planted in 94 GitHub repos (Oct 2026), launched by a VS Code `tasks.json` folderOpen task disguised as a font file. | Node.js executing a `.woff2` file — never legitimate |
 | [GhostAction phishing arm](detections/ghostaction-phishing-arm.md) | Access-refresh phishing via lookalike domain `my-github[.]com` (Oct 2026): fake GitHub security alert → reverse proxy harvesting password + 2FA → silent OAuth app authorization (`repo`, `workflow`, `read:org`). | OAuth client ID `Ov23ctrqCqZ79UaYKwyq`; the `my-github.com` domain |
