@@ -326,9 +326,9 @@ rule REF8801_ApexAccelerator_Triage {
         $ps1a = "_apex_run.ps1" ascii
         $ps1b = "_audit_run.ps1" ascii
         // Golang loader block-shuffle LCG constants (little-endian)
-        $lcg_a = { D5 C6 B9 DE 43 5D F7 A8 }
-        $lcg_c = { B7 BB 35 BB C1 02 ED E0 }
-        $lcg_ai = { 7D D4 42 ED 0E BF 0F F4 }
+        $lcg_a = { D5 43 DE B9 C6 74 A8 F7 }
+        $lcg_c = { B7 5B E3 BB C1 02 ED E0 }
+        $lcg_ai = { 7D DD 42 DD 0E BF 0F F4 }
         // Chrome app-bound unwrap AES-GCM constant (prefix)
         $chrome_k = "B31C6E241AC846728DA9C1FAC4936651CFFB944D1" ascii
     condition:
