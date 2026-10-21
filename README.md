@@ -18,6 +18,7 @@ the published indicators, and free to use.
 | [GhostAction phishing arm](detections/ghostaction-phishing-arm.md) | Access-refresh phishing via lookalike domain `my-github[.]com` (Oct 2026): fake GitHub security alert → reverse proxy harvesting password + 2FA → silent OAuth app authorization (`repo`, `workflow`, `read:org`). | OAuth client ID `Ov23ctrqCqZ79UaYKwyq`; the `my-github.com` domain |
 | [MALFEX `imgdecode`](detections/malfex-imgdecode.md) | npm package whose native DLL side-loads encrypted shellcode from a GitHub-hosted image; ends in the "movinlike" stealer+RAT. MALFEX active since Aug 2023. | `node.exe` spawning `dllhost.exe` with no `/Processid:` |
 | [Aoki infostealer](detections/aoki-infostealer.md) | Latest Aoki (Aokigahara) builds targeting AI developer credential stores — Claude, ChatGPT, Codex, Copilot, Cursor, Gemini, JetBrains AI, Kiro — plus AWS creds. | Access to `~/.claude.json`, Codex `config.toml`, AI-tool cookie stores |
+| [OVHcloud `envchecker`](detections/ovhcloud-envchecker.md) | GitHub release-asset hijack (Oct 19, 2026): trojanized OVHcloud CLI v0.11.0–v0.15.0 stole cloud/SSH/AI-assistant secrets for ~94 minutes; entry was a malicious VS Code extension on the dev's personal Mac a year earlier. | `envchecker-*` temp dir; exfil `45.32.148.174:443` |
 
 Each pack contains the full published IOC set, Sigma rules, YARA where it
 earns its keep, ATT&CK mapping, and response notes (including the traps:
