@@ -114,15 +114,28 @@ Confirmed vs. inferred (don't blur them):
   registration Oct 13, 2026; the provenance-recorded lookalike source
   owner `Berri-AI`, run 39587059944, build window 10:51–11:06 UTC,
   `data = "cook"` packaging commit and `COPY cook` Docker commits; PyPI
-  publication 11:39:51 UTC with Socket alerts at 11:46:30 UTC.
+  publication 11:39:51 UTC with Socket alerts at 11:46:30 UTC; PyPI pulled
+  the release by 13:23 UTC Oct 21 (~2h exposure); malicious Docker images
+  served 11:46–14:20 UTC (SafeDep timeline).
 - INFERENCE: how the build environment or publishing credential was
   compromised is UNKNOWN; the provenance public run URL 404s and job logs
   are private — the recorded inputs are evidence of what the workflow
-  RECORDED, not proof of trustworthy authorization (Socket's caveat). OSM
+  RECORDED, not proof of trustworthy authorization (Socket's caveat).
+  Oct 22 suspect (LiteLLM, via Oliver Jensen — explicitly UNCONFIRMED):
+  the malicious actions ran through three engineers' GitHub accounts via
+  stolen GitHub CLI OAuth tokens — one account triggered the
+  project-releaser run, another approved it; Jensen suspects the tokens
+  leaked through logs of an internet-exposed internal deployment. All
+  involved tokens revoked, org reduced to one unaffected user, trusted
+  registry links to the GitHub org removed. THN's Oct 22 root-cause note
+  (Oct 19 widened release permissions; org-owner token disabling branch
+  protection, force-push) may describe the same window — keep both, await
+  LiteLLM's final report. OSM
   explicitly does NOT attribute to TeamPCP or any actor, despite the
   March 2026 TeamPCP Trivy-token compromise that hit LiteLLM 1.82.7/1.82.8
   with the same startup-hook technique — second PyPI compromise of
-  LiteLLM in 2026, infrastructure differs. OSM did not probe the panel or
+  LiteLLM in 2026, infrastructure differs. As of Oct 22, 2026, no public
+  attribution to any named actor. OSM did not probe the panel or
   the collection endpoint; no IP/hosting attribution for `litellm.dev`
   should be asserted from these reports. Exposure scope is bounded by
   download counts PyPI has not published.
@@ -200,6 +213,13 @@ https://raw[.]githubusercontent[.]com/letters9813/pythonclient-test/main/domain.
                                          # mutable pointer; EMPTY since Oct 20 09:15 UTC
 http://{domain}/codepy                    # unsigned remote-Python fetch (dormant until pointer set)
 # historical pointer contents (not confirmed operational C2): localhost:18909, test[.]test[.]com:18909
+
+# Attacker post-exfil infrastructure (Wiz, Oct 22): from these two IPs the
+# operator validated stolen AWS instance-role creds ~4.5h post-exfil —
+# sts:GetCallerIdentity → bedrock:ListFoundationModels/ListModels
+# (LLMjacking pattern), plus IAM enumeration (ListRoles, ListUsers,
+# ListAccessKeys) in a few environments
+168.100.8[.]57 ; 165.227.201[.]8
 
 # AI dev-tool configs targeted (overlap with OVHcloud/Aoki hunting)
 /.codex/auth.json  / .claude/.credentials.json  / .gemini/oauth_creds.json  / .cursor/mcp.json
