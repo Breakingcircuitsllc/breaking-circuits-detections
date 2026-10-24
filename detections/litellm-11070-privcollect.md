@@ -442,6 +442,28 @@ detection:
 level: high
 ```
 
+```yaml
+title: Secret-stealing GitHub Actions workflow file (cache.yml)
+id: 7f2a1c96-litellm-cacheyml
+status: experimental
+description: Detects creation of .github/workflows/cache.yml — the filename
+  used twice (Oct 10 and Oct 12, 2026) for the secret-stealing workflows
+  that drained the BerriAI/litellm org's CI secrets to webhook.site ahead
+  of the trojanized 1.107.0 release. Legitimate cache workflows exist:
+  the discriminator is any webhook.site / request-capture URL in the
+  workflow content — inspect the file on hit.
+author: Breaking Circuits threat-intel watch
+logsource:
+  category: file_event
+detection:
+  selection:
+    TargetFilename|endswith:
+      - '\.github\workflows\cache.yml'
+      - '/.github/workflows/cache.yml'
+  condition: selection
+level: high
+```
+
 ## Response notes
 
 - **Rotate everything, then rebuild.** Any Python that started after the
