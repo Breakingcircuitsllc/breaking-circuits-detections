@@ -19,6 +19,40 @@ reports affected `litellm-database` and `litellm-non_root` GHCR images and
 the main amd64 image; the others share the recorded malicious source
 revision).
 
+## Update — Oct 23, 2026: the attack chain is confirmed (Socket + LiteLLM)
+
+Socket's attack timeline and LiteLLM's own attack-chain writeup (both
+Oct 23) replace the guesswork about initial access. The attacker held
+**push access to `BerriAI/litellm` from Oct 10, 2026 — 11 days before**
+the malicious 1.107.0 release. On Oct 10 and again Oct 12, two
+secret-stealing GitHub Actions workflows (`.github/workflows/cache.yml`,
+commit subject "ci: bump cache config", on short-lived branches
+`ci-tmp-a351cc` and `ci-tmp-be33e9`, pushed and deleted the same day) ran
+successfully and exfiltrated organization and environment CI secrets to
+webhook.site endpoints (full URLs in the IOC list below). Root cause,
+per LiteLLM: an **Agent Platform master key accidentally committed to a
+public repository in May 2026 and never revoked**, used to pull a GitHub
+org owner's token. LiteLLM's audit logs tie the GH_TOKEN stolen on
+Oct 10 to the approval of the Oct 21 malicious release — this
+**supersedes the Oct 22 suspected vector** (stolen GitHub CLI tokens via
+exposed deployment logs, below, now marked superseded). Secrets drained
+during the 11 days include the GitHub App private key, the org GH_TOKEN,
+ANTHROPIC_API_KEY, OPENAI_API_KEY, AWS_BEARER_TOKEN_BEDROCK, Linear
+session cookies, and DATABASE_URLs. Attacker IPs: 69.48.229.143
+(Oct 10), 199.91.221.39 (Oct 21). Workflow commits:
+b69bc36fd4e23b23ea09f4ce63a92b07258f5044,
+1a6e3c1e41f1b5c8eeaeeb2ae94bcd95390fa891. ATT&CK additions: T1528 (Steal
+Application Access Token), T1195.002 already mapped below. **Hunt your
+own orgs:** search Actions history and the audit log for `cache.yml`,
+`ci-tmp-*` branches, and `webhook.site` anywhere in workflow files —
+the pre-release CI theft, not the wheel, is where the org-wide damage
+happened. Separately (Oct 23): the loader's GitHub pointer account
+`letters9813` has been **removed** (profile and `domain.txt` both 404),
+so surviving loaders can no longer fetch a new C2 domain; the
+`privcollect` stealer itself is unchanged and still exfiltrates at
+interpreter startup. Still ahead: LiteLLM's embargoed fix for a second,
+separate vulnerability ships publicly with disclosure on **Oct 27**.
+
 Delivery path (the strongest build-system evidence): the Linux amd64
 image's attached build provenance records the PRIVATE
 `BerriAI/project-releaser` workflow, run `39587059944`, and a dispatch
@@ -76,6 +110,9 @@ resolve it, GET `http://{domain}/codepy`, `compile()` it, `exec()` with
 signature or hash verification. `domain.txt` has been EMPTY since
 2026-10-20 09:15 UTC (per Upwind; OSM did not independently verify
 history) — the loader is dormant until the operator commits a new domain.
+(Update Oct 23, 2026: the `letters9813` account has been removed from
+GitHub and the pointer file 404s with it — the re-arm path is dead; see
+the attack-chain update at the top of this pack.)
 Earlier pointer contents were `localhost:18909` and `test[.]test[.]com:18909`.
 
 What it steals ("privcollect", 16 modules, each behind its own error
@@ -100,7 +137,10 @@ Primary sources: Upwind public investigation (Oct 21, 2026); Socket blog
 "LiteLLM PyPI Package and Docker Images Compromised" (Oct 21, 2026);
 OpenSourceMalware analysis "LiteLLM 1.107.0 PyPI Wheel Contains a
 Credential Stealer and Persistent Python Backdoor" (Oct 21, 2026, by
-c0a15726-c5b1-4b0d-85e6-fe15553df9e2).
+c0a15726-c5b1-4b0d-85e6-fe15553df9e2). Attack-chain update sources
+(Oct 23, 2026): Socket, "LiteLLM attack timeline"
+(socket.dev/blog/litellm-attack-timeline); LiteLLM, "Security Incident
+Oct 21 2026 — Attack Chain" (docs.litellm.ai/blog).
 
 Confirmed vs. inferred (don't blur them):
 - CONFIRMED: all seven 1.107.0 wheels affected (Upwind); the three
@@ -118,10 +158,13 @@ Confirmed vs. inferred (don't blur them):
   the release by 13:23 UTC Oct 21 (~2h exposure); malicious Docker images
   served 11:46–14:20 UTC (SafeDep timeline).
 - INFERENCE: how the build environment or publishing credential was
-  compromised is UNKNOWN; the provenance public run URL 404s and job logs
-  are private — the recorded inputs are evidence of what the workflow
+  compromised was UNKNOWN until Oct 23 — the attack-chain update at the
+  top of this pack now answers it (May 2026 master-key commit → org-owner
+  token → Oct 10 push access). The provenance public run URL 404s and job
+  logs are private — the recorded inputs are evidence of what the workflow
   RECORDED, not proof of trustworthy authorization (Socket's caveat).
-  Oct 22 suspect (LiteLLM, via Oliver Jensen — explicitly UNCONFIRMED):
+  Oct 22 suspect (LiteLLM, via Oliver Jensen — explicitly UNCONFIRMED at
+  the time, and SUPERSEDED Oct 23 by the confirmed chain above):
   the malicious actions ran through three engineers' GitHub accounts via
   stolen GitHub CLI OAuth tokens — one account triggered the
   project-releaser run, another approved it; Jensen suspects the tokens
@@ -129,8 +172,8 @@ Confirmed vs. inferred (don't blur them):
   involved tokens revoked, org reduced to one unaffected user, trusted
   registry links to the GitHub org removed. THN's Oct 22 root-cause note
   (Oct 19 widened release permissions; org-owner token disabling branch
-  protection, force-push) may describe the same window — keep both, await
-  LiteLLM's final report. OSM
+  protection, force-push) may describe the same window — LiteLLM's
+  Oct 23 attack-chain writeup is now the authoritative account. OSM
   explicitly does NOT attribute to TeamPCP or any actor, despite the
   March 2026 TeamPCP Trivy-token compromise that hit LiteLLM 1.82.7/1.82.8
   with the same startup-hook technique — second PyPI compromise of
@@ -220,6 +263,16 @@ http://{domain}/codepy                    # unsigned remote-Python fetch (dorman
 # (LLMjacking pattern), plus IAM enumeration (ListRoles, ListUsers,
 # ListAccessKeys) in a few environments
 168.100.8[.]57 ; 165.227.201[.]8
+
+# Attack-chain infrastructure (Socket timeline + LiteLLM writeup, Oct 23)
+69.48.229[.]143        # attacker IP — Oct 10 CI-secret theft
+199.91.221[.]39        # attacker IP — Oct 21 release activity
+webhook[.]site/65a42464-3cfa-4b02-a18c-17a6d7b86f37   # CI exfil endpoint (Oct 10 run)
+webhook[.]site/4da03473-a3e7-4dc2-a087-9c564b4208e1   # CI exfil endpoint (Oct 12 run)
+.github/workflows/cache.yml   # secret-stealing workflow ("ci: bump cache config")
+ci-tmp-a351cc ; ci-tmp-be33e9  # short-lived branches that carried it (deleted same day)
+b69bc36fd4e23b23ea09f4ce63a92b07258f5044   # workflow commit
+1a6e3c1e41f1b5c8eeaeeb2ae94bcd95390fa891   # workflow commit
 
 # AI dev-tool configs targeted (overlap with OVHcloud/Aoki hunting)
 /.codex/auth.json  / .claude/.credentials.json  / .gemini/oauth_creds.json  / .cursor/mcp.json
